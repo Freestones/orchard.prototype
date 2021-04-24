@@ -1,0 +1,19 @@
+#!/bin/sh
+
+set -e
+
+compose_dir="$(dirname "$0")"
+django_env="$1"; shift
+
+project="orchard_${django_env}"
+compose_file="${compose_dir}/${django_env}.yaml"
+env_file="${compose_dir}/${django_env}.env"
+
+if ! test -f "$env_file"; then
+    cp "${env_file}.example" "$env_file"
+    echo "Created a ${django_env} environment file! Please press enter to edit it."
+    read ok
+    ${EDITOR:-nano} "$env_file"
+fi
+
+docker-compose --project-name "$project" --file "$compose_file" --env-file "$env_file" "$@"

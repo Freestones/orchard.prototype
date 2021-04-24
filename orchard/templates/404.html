@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}Resource not found{% endblock %}
+
+{% block content %}
+<h1>Resource not found</h1>
+
+<p>{% if exception %}{{ exception }}{% else %}Sorry, nothing here.{% endif %}</p>
+{% endblock content %}

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}Forbidden{% endblock %}
+
+{% block content %}
+<h1>Forbidden</h1>
+
+<p>{% if exception %}{{ exception }}{% else %}Sorry, can't access this page.{% endif %}</p>
+{% endblock content %}

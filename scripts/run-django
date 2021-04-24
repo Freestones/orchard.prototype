@@ -1,0 +1,41 @@
+#!/bin/sh
+
+set -e
+
+echo "Hello Django. Checking env vars for ${DJANGO_APP_NAME:-app}..."
+: ${DJANGO_DB_HOST?}
+: ${DJANGO_DB_PORT?}
+: ${DJANGO_DB_NAME?}
+: ${DJANGO_DB_USER?}
+: ${DJANGO_DB_PASSWORD?}
+: ${DJANGO_ENV?}
+: ${DJANGO_APP_NAME?}
+: ${DJANGO_ALLOWED_HOSTS?}
+: ${DJANGO_SECRET_KEY?}
+: ${DJANGO_DEFAULT_EMAIL_ADDRESS?}
+: ${MAILGUN_DOMAIN?}
+: ${MAILGUN_API_KEY?}
+
+echo "Waiting for db to become available..."
+until nc -z "$DJANGO_DB_HOST" "$DJANGO_DB_PORT"; do
+    sleep 1
+done
+
+echo "Performing migrations..."
+./manage.py migrate
+
+if test -n "$DJANGO_COLLECT_STATIC"; then
+    echo "Collecting static files..."
+    ./manage.py collectstatic -c --noinput
+fi
+
+case "$DJANGO_ENV" in
+    dev)
+        echo "Running development server."
+        ./manage.py runserver 0.0.0.0:8000
+        ;;
+    *)
+        echo "Running in gunicorn via WSGI."
+        gunicorn -c /etc/gunicorn/gunicorn.py "${DJANGO_APP_NAME}.wsgi"
+        ;;
+esac

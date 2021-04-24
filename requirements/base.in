@@ -1,0 +1,6 @@
+django
+django-anymail
+django-allauth
+django-crispy-forms
+djangorestframework
+psycopg2

@@ -1,0 +1,16 @@
+version: "3"
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+      args:
+        UID: 9000
+        DJANGO_ENV: production
+    env_file: production.env
+    environment:
+      - DJANGO_APP_NAME=orchard
+      - DJANGO_ENV=production
+    working_dir: /app
+    ports:
+      - 8000:8000
